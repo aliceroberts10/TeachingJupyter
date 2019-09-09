@@ -398,6 +398,327 @@ mat[np.abs(mat-mat.mean()) > 1.5*mat.std()]
 mat[np.abs(mat-mat.mean()) > 1.5*mat.std()] = mat.mean()
 
 
+# In[124]:
+
+
+arr = np.arange(3)
+arr+4
+
+
+# In[125]:
+
+
+arr/7
+
+
+# In[126]:
+
+
+arr ** 2
+
+
+# In[128]:
+
+
+mat = np.arange(9).reshape((3,3))
+vec = np.arange(3)
+
+
+# In[129]:
+
+
+mat+vec
+
+
+# In[130]:
+
+
+v1 = np.arange(3)
+v2 = np.arange(3).reshape((3,1))
+
+
+# In[131]:
+
+
+v2
+
+
+# In[134]:
+
+
+v2.shape
+
+
+# In[135]:
+
+
+v1 + v2
+
+
+# In[138]:
+
+
+#example of common matrix errors 
+# np.arange (3) + np.arange(4)
+
+
+# dir command 
+# * to see what attributes and methods are in an object
+
+# In[139]:
+
+
+v = np.arange(12).reshape((4,3))
+
+
+# In[140]:
+
+
+dir(v)
+
+
+# In[143]:
+
+
+v.any()
+
+
+# In[144]:
+
+
+v.all()
+
+
+# In[147]:
+
+
+import this
+
+
+# In[149]:
+
+
+if v.any():
+    print('v is True')
+
+
+# In[150]:
+
+
+v.prod()
+
+
+# In[151]:
+
+
+v.sum(axis=1)
+
+
+# In[152]:
+
+
+v.sum(axis=0)
+
+
+# In[157]:
+
+
+v1 = v.copy()
+
+
+# In[158]:
+
+
+v1[0,0] = 1000
+
+
+# In[160]:
+
+
+v1
+
+
+# In[161]:
+
+
+data = v.dumps()
+data
+
+
+# In[163]:
+
+
+v2 = np.loads(data)
+v2
+
+
+# In[164]:
+
+
+np.prod(v)
+
+
+# In[165]:
+
+
+np.sin(np.pi/2)
+
+
+# In[167]:
+
+
+v = np.arange(-3,3)
+v
+
+
+# In[168]:
+
+
+np.sin(v)
+
+
+# In[169]:
+
+
+def noneg(n):
+    if n <0: 
+        return 0
+    return n
+
+
+# In[170]:
+
+
+noneg(7)
+
+
+# In[171]:
+
+
+noneg(-3)
+
+
+# In[173]:
+
+
+#example of error
+#noneg(v)
+
+
+# In[174]:
+
+
+# we fix this problem by the following:
+@np.vectorize
+def noneg(n):
+    if n <0: 
+        return 0
+    return n
+
+
+# In[175]:
+
+
+noneg = np.vectorize(noneg)
+
+
+# In[176]:
+
+
+noneg(3)
+
+
+# In[177]:
+
+
+noneg(3).shape
+
+
+# In[178]:
+
+
+noneg(v)
+
+
+# In[180]:
+
+
+nv = np.array([-1,np.nan,1])
+np.sin(nv)
+
+
+# In[181]:
+
+
+#another example of error
+#noneg(nv)
+
+
+# In[182]:
+
+
+np.nan>0
+
+
+# In[183]:
+
+
+np.nan <0
+
+
+# In[184]:
+
+
+np.nan == np.nan
+
+
+# In[187]:
+
+
+@np.vectorize
+def noneg(n):
+    if not np.isnan(n) and n <0: 
+        return n.__class__(0)
+    return n
+
+
+# In[189]:
+
+
+noneg(nv)
+#now it works
+
+
+# In[190]:
+
+
+#another way 
+@np.vectorize
+def isneg(n):
+    return not np.isnan(n) and n < 0 
+
+
+# In[191]:
+
+
+nv[isneg(nv)] = 0
+
+
+# In[192]:
+
+
+nv
+
+
+# ## Pandas
+
+# * Library for real-world data
+# * Adopted by Python scientific community as the main tool for working with data
+# * Many I/O tools
+# * Supports heterogeneous data (mixed types)
+# * Time series functionality
+# * Efficient with large amounts of data
+
 # In[ ]:
 
 
