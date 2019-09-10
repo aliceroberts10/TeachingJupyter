@@ -719,6 +719,406 @@ nv
 # * Time series functionality
 # * Efficient with large amounts of data
 
+# In[194]:
+
+
+#edit this code based on where you've saved the track.csv on your computer
+from os import path
+fname = path.expanduser('/Users/alice/Desktop/track.csv')
+
+
+# In[195]:
+
+
+get_ipython().system('ls -lh "$fname"')
+
+
+# In[196]:
+
+
+path.getsize(fname)
+
+
+# In[197]:
+
+
+path.getsize(fname) / (1<<10)
+
+
+# In[200]:
+
+
+with open(fname) as fp:
+    for lnum, line in enumerate(fp):
+        if lnum > 10: 
+            break
+        print(line[:-1])
+
+
+# In[202]:
+
+
+get_ipython().system('wc -l "$fname"')
+
+
+# In[203]:
+
+
+with open(fname) as fp: 
+    print(sum(1 for line in fp))
+
+
+# In[204]:
+
+
+import pandas as pd
+
+
+# In[205]:
+
+
+df = pd.read_csv(fname)
+
+
+# In[206]:
+
+
+len(df)
+
+
+# In[207]:
+
+
+df.columns
+
+
+# In[208]:
+
+
+df.info
+
+
+# In[209]:
+
+
+df.head()
+
+
+# In[210]:
+
+
+df.dtypes
+
+
+# In[211]:
+
+
+df = pd.read_csv(fname, parse_dates=['time'])
+
+
+# In[212]:
+
+
+df.dtypes
+
+
+# In[213]:
+
+
+df['lat']
+
+
+# In[214]:
+
+
+df.lat
+
+
+# In[215]:
+
+
+df[['lat', 'lng']]
+
+
+# In[216]:
+
+
+df['lat'][0]
+
+
+# In[217]:
+
+
+df.loc[0]
+
+
+# In[218]:
+
+
+df.loc[2:7]
+
+
+# In[219]:
+
+
+df[['lat', 'lng']][2:7]
+
+
+# In[220]:
+
+
+df.index
+
+
+# In[221]:
+
+
+df1 = pd.DataFrame(np.arange(10).reshape((5,2)), columns=['x', 'y'], index=['a', 'b', 'c', 'd', 'e'])
+df1
+
+
+# In[222]:
+
+
+df1.loc['a']
+
+
+# In[223]:
+
+
+df1.loc['b': 'd']
+
+
+# In[224]:
+
+
+df.index
+
+
+# In[225]:
+
+
+df.index = df['time']
+df.index
+
+
+# In[226]:
+
+
+df.loc['2015-08-20 04:18:54']
+
+
+# In[227]:
+
+
+df.loc['2015-08-20 03:48']
+
+
+# In[228]:
+
+
+import pytz
+
+
+# In[229]:
+
+
+ts = df.index[0]
+
+
+# In[230]:
+
+
+ts.tz_localize(pytz.UTC)
+
+
+# In[231]:
+
+
+ts.tz_localize(pytz.UTC).tz_convert(pytz.timezone('Asia/Jerusalem'))
+
+
+# In[232]:
+
+
+df.index = df.index.tz_localize(pytz.UTC).tz_convert(pytz.timezone('Asia/Jerusalem'))
+df.index[:10]
+
+
+# In[233]:
+
+
+get_ipython().run_line_magic('pwd', '')
+
+
+# In[237]:
+
+
+#make sure the geo.py file is in the same folder as this notebook
+import geo
+
+
+# In[238]:
+
+
+import sys
+sys.path
+
+
+# In[239]:
+
+
+get_ipython().run_line_magic('pinfo2', 'geo')
+
+
+# In[240]:
+
+
+from geo import circle_dist
+
+
+# In[241]:
+
+
+lat1, lng1 = df.iloc[0].lat, df.iloc[0].lng
+lat2, lng2 = df.iloc[1].lat, df.iloc[1].lng
+
+
+# In[242]:
+
+
+circle_dist(lat1, lng1, lat2, lng2)
+
+
+# In[243]:
+
+
+s = pd.Series(np.arange(5))
+
+
+# In[244]:
+
+
+s
+
+
+# In[245]:
+
+
+s.shift()
+
+
+# In[246]:
+
+
+s.shift(-1)
+
+
+# In[247]:
+
+
+dist = circle_dist(df['lat'], df['lng'], df['lat'].shift(), df['lng'].shift())
+
+
+# In[248]:
+
+
+dist[:10]
+
+
+# In[249]:
+
+
+dist.sum()
+
+
+# In[250]:
+
+
+dt = df['time'] - df['time'].shift()
+
+
+# In[251]:
+
+
+dt[:10]
+
+
+# In[252]:
+
+
+dt.sum()
+
+
+# In[253]:
+
+
+dt[1].total_seconds()
+
+
+# In[254]:
+
+
+dt[1] / np.timedelta64(1, 'h')
+
+
+# In[255]:
+
+
+dt[1].total_seconds()/3600
+
+
+# In[256]:
+
+
+speed = dist / (dt / np.timedelta64(1, 'h'))
+
+
+# In[257]:
+
+
+speed[:10]
+
+
+# In[258]:
+
+
+df['dist'] = dist
+df['dt'] = dt
+
+
+# In[259]:
+
+
+df1m = df.resample('1min').sum()
+
+
+# In[260]:
+
+
+df1m.index
+
+
+# In[261]:
+
+
+df1m.columns
+
+
+# In[262]:
+
+
+df['dt'] = dt / np.timedelta64(1, 'h')
+df1m = df.resample('1min').sum()
+speed1m = df1m['dist'] / df1m['dt']
+
+
+# In[263]:
+
+
+speed1m[:10]
+
+
 # In[ ]:
 
 
